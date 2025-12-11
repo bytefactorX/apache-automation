@@ -8,16 +8,17 @@ import subprocess
 import re
 import os
 
-# so python understands
+# script constants
 # TODO: replace all ~ with f"{HOME}"
 HOME = os.path.expanduser("~")
+INTERFACE = "ens160"
+HTTP = 80
+HTTPS = 443
 
 
 # manual IP address will be required 
 # to ensure best practices are being exercised
 def chk_ip_addr():
-    INTERFACE = "ens160"
-
     print("Checking default interface for IPv4 method...")
     ip_method = subprocess.run(f"nmcli con show {INTERFACE} | grep ipv4.method >&/dev/null", shell=True)
 
