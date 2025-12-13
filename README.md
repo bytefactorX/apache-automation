@@ -6,12 +6,20 @@ This is a school project, not intended to for professional/enterprise use.
 # Details
 This automation script will automate the setup of: 
 - apache httpd install
-- writing VirtualHost's to /etc/httpd/conf/httpd.conf
+- writing VirtualHosts to /etc/httpd/conf/httpd.conf
 - TLS/SSL setup with mod_ssl
 - index.html setup with 3 HTML/CSS templates to choose from (business, blog, portfolio)
 
+# Requirements
+- RHEL version 8.x or higher (must support dnf package manager)
+- Python 3.x
+- User with sudo permissions
+
 # Download and run steps
 To download the necessary files, either download as zip or use the git clone command. 
+```
+git clone https://github.com/bytefactorX/apache-automation.git
+```
 
 Once files are downloaded, begin the automation script by running:
 ```
