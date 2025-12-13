@@ -15,6 +15,8 @@ ROOT = "/var/www/html"
 HTTP = 80
 HTTPS = 443
 
+# import other python scripts
+from conf import update_http_conf, update_https_conf
 
 # manual IP address will be required 
 # to ensure best practices are being exercised
@@ -80,20 +82,22 @@ def mk_web_dir(f_mk_prompt):
 
 # choose from the templates available
 # and cp into the directory
-# TODO: fix prompt question to make more sense
 def select_template(f_mk_prompt):
-    temp_prompt = input("Would you like to use a CSS template? y/N: ")
+    temp_options = """
+        Template options:
+        no template    displays default apache page
+        business       displays a basic business-style page
+        blog           displays a basic blog-style page
+        portfolio      displays a basic portfolio-style page    
+    """
+    temp_prompt = input("Pick which style to use:  ")
     
     # if no template, insert most basic index.html file 
     # for basic access
     match temp_prompt.lower():
         case 'no template':
-            print("No template selected. Making index.html...")
-            # cp to home dir first
-            subprocess.run(["cp", "templates/index.html", f"{HOME}/{f_mk_prompt}"])
-            # then cp to doc root
-            subprocess.run(["sudo", "cp", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}/index.html"])
-            print("index.html successfully added.")
+            # do nothing
+            print("No template selected. Continuing...")
         case 'business':
             print("Selecting business template...")
             # cp to home dir first
@@ -130,6 +134,18 @@ def main():
     mk_web_dir(f_mk_prompt)
 
     # run conf scripts
+    # check what setup is being used
+    sec_prompt = input("Is this setup using TLS/SSL? y/N: ")
+    
+    if sec_prompt.lower().strip() == 'y':
+        # run https func here
+        # also run tls_ssl.py here as well
+        pass
+    elif sec_prompt.lower().strip() == 'n':
+        print("Setting up conf file...")
+        update_http_conf(HTTP, f_mk_prompt, ROOT)
+    else:
+        print("Please answer y or n to the question.")    
 
     # finally, set template
     select_template(f_mk_prompt)
