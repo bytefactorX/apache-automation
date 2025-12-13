@@ -43,7 +43,7 @@ install_mod_ssl() {
 	MOD_SSL_PKG="mod_ssl"
 
 	# less package checks here since mod_ssl is not required
-	read -p "Do you wish to set up a website with HTTPS? (select N if already installed or will not use) y/N: " choice
+	read -p "Do you wish to set up a website with HTTPS? (select N if mod_ssl installed or will not use) y/N: " choice
 	# set input to lowercase
 	if [[ ${choice,,} == "y" ]]; then
 	        echo "Installing $MOD_SSL_PKG"	
