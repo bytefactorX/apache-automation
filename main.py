@@ -9,8 +9,6 @@ import re
 import os
 
 # script constants
-# TODO: replace all ~ with f"{HOME}"
-# TODO: replace all /var/www/html with f"{ROOT}"
 HOME = os.path.expanduser("~")
 INTERFACE = "ens160"
 ROOT = "/var/www/html"
@@ -22,9 +20,10 @@ HTTPS = 443
 # to ensure best practices are being exercised
 def chk_ip_addr():
     print("Checking default interface for IPv4 method...")
-    ip_method = subprocess.run(f"nmcli con show {INTERFACE} | grep ipv4.method >&/dev/null", shell=True)
+    # capture output to use after process completed
+    ip_method = subprocess.run(f"nmcli con show {INTERFACE} | grep ipv4.method", capture_output=True, text=True, shell=True)
 
-    if "auto" in ip_method:
+    if "auto" in ip_method.stdout:
         print("Please change IPv4 method to manual before proceeding.")
         # simple check to ensure user switches to manual IP
         # if they do not, code will still run, as this is just a warning
@@ -59,12 +58,19 @@ def get_web_dir():
 
 # make the dir, cp it to /var/www/html, and change owner
 def mk_web_dir(f_mk_prompt):
-    print("Creating directory in home...")
-    subprocess.run(f"mkdir {HOME}/{f_mk_prompt}", shell=True)
+    dir_path = os.path.join(HOME, f_mk_prompt) 
+    
+    if os.path.exists(dir_path):
+        print("Directory already exists. Please go back and make a unique directory.")
+        # run func again to make unique dir        
+        get_web_dir()
+    else:
+        print("Creating directory in home...")
+        subprocess.run(f"mkdir {HOME}/{f_mk_prompt}", shell=True)
 
     try:
         print("Sending directory to document root...")
-        subprocess.run(["cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}{f_mk_prompt}"], check=True)
+        subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}"], check=True)
 
         # change directory ownership to apache:apache
         subprocess.run(["sudo", "chown", "-R", "apache:apache", f"{ROOT}/{f_mk_prompt}"], check=True)
@@ -74,6 +80,7 @@ def mk_web_dir(f_mk_prompt):
 
 # choose from the templates available
 # and cp into the directory
+# TODO: fix prompt question to make more sense
 def select_template(f_mk_prompt):
     temp_prompt = input("Would you like to use a CSS template? y/N: ")
     
