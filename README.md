@@ -3,6 +3,8 @@ Simple script written in Python/Bash to automate the setup process for an Apache
 
 This is a school project, not intended to for professional/enterprise use.
 
+Full credit goes to AJ at html5up.net for the CSS templates being used.
+
 # Details
 This automation script will automate the setup of: 
 - apache httpd install
