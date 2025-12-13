@@ -10,8 +10,10 @@ import os
 
 # script constants
 # TODO: replace all ~ with f"{HOME}"
+# TODO: replace all /var/www/html with f"{ROOT}"
 HOME = os.path.expanduser("~")
 INTERFACE = "ens160"
+ROOT = "/var/www/html"
 HTTP = 80
 HTTPS = 443
 
@@ -62,10 +64,10 @@ def mk_web_dir(f_mk_prompt):
 
     try:
         print("Sending directory to document root...")
-        subprocess.run(["cp", "-R", f"{HOME}/{f_mk_prompt}", f"/var/www/html/{f_mk_prompt}"], check=True)
+        subprocess.run(["cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}{f_mk_prompt}"], check=True)
 
         # change directory ownership to apache:apache
-        subprocess.run(["sudo", "chown", "-R", "apache:apache", f"/var/www/html/{f_mk_prompt}"], check=True)
+        subprocess.run(["sudo", "chown", "-R", "apache:apache", f"{ROOT}/{f_mk_prompt}"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error occurred with subprocess: {e}")
 
@@ -77,27 +79,37 @@ def select_template(f_mk_prompt):
     
     # if no template, insert most basic index.html file 
     # for basic access
-    if temp_prompt.lower() == 'n':
-        print("No template selected. Making index.html...")
-        # cp to home dir first
-        subprocess.run(["cp", "index.html", f"{HOME}/{f_mk_prompt}"])
-        # then cp to doc root
-        subprocess.run(["sudo", "cp", f"{HOME}/{f_mk_prompt}", f"/var/www/html/{f_mk_prompt}/index.html"])
-        print("index.html successfully added.")
-    elif temp_prompt.lower() == 'y':
-        select_temp = input("Select from the following: business, blog, portfolio: ")
-
-        # this is horrendous, but template logic is here
-        if select_temp.lower() == 'business':
-            pass
-        elif select_temp.lower() == 'blog':
-            pass
-        elif select_temp.lower() == 'portfolio':
-            pass
-        else:
-            print("Please enter a valid template type.")
-    else:
-        print("Please enter a valid response.")        
+    match temp_prompt.lower():
+        case 'no template':
+            print("No template selected. Making index.html...")
+            # cp to home dir first
+            subprocess.run(["cp", "templates/index.html", f"{HOME}/{f_mk_prompt}"])
+            # then cp to doc root
+            subprocess.run(["sudo", "cp", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}/index.html"])
+            print("index.html successfully added.")
+        case 'business':
+            print("Selecting business template...")
+            # cp to home dir first
+            subprocess.run(["cp", "-R", "templates/business", f"{HOME}/{f_mk_prompt}/business"])
+            # then cp to doc root
+            subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/business", f"{ROOT}/{f_mk_prompt}/business"])
+            print("Business template successfully added.")
+        case 'blog':
+            print("Selecting blog template...")
+            # cp to home dir first
+            subprocess.run(["cp", "-R", "templates/blog", f"{HOME}/{f_mk_prompt}/blog"])
+            # then cp to doc root
+            subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/blog", f"{ROOT}/{f_mk_prompt}/blog"])
+            print("Blog template successfully added.")
+        case 'portfolio':
+            print("Selecting portfolio template...")
+            # cp to home dir first
+            subprocess.run(["cp", "-R", "templates/portfolio", f"{HOME}/{f_mk_prompt}/portfolio"])
+            # then cp to doc root
+            subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/portfolio", f"{ROOT}/{f_mk_prompt}/portfolio"])
+            print("Portfolio template successfully added.")
+        case _:
+            print("Please type a valid response.")
 
 
 def main():
