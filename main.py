@@ -153,6 +153,10 @@ def main():
 
     # finally, set template
     select_template(f_mk_prompt)
+    
+    print("Apache setup complete.")
+    print("Ensure to add a CNAME record for the website in the DNS zone.")
+    print("Quitting...")
 
 
 if __name__ == "__main__":
