@@ -75,9 +75,6 @@ def mk_web_dir(f_mk_prompt):
     try:
         print("Sending directory to document root...")
         subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}"], check=True)
-
-        # change directory ownership to apache:apache
-        subprocess.run(["sudo", "chown", "-R", "apache:apache", f"{ROOT}/{f_mk_prompt}"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error occurred with subprocess: {e}")
 
@@ -124,7 +121,10 @@ def select_template(f_mk_prompt):
             print("Portfolio template successfully added.")
         case _:
             print("Please type a valid response.")
-
+    
+    # add proper perms to the doc root 
+    subprocess.run(["sudo", "chown", "-R", "apache:apache", f"{ROOT}"])
+    
 
 def main():
     # begin by running bash script
