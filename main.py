@@ -17,6 +17,7 @@ HTTPS = 443
 
 # import other python scripts
 from conf import update_http_conf, update_https_conf
+from tls_ssl import mk_crt, mk_bak
 
 # manual IP address will be required 
 # to ensure best practices are being exercised
@@ -82,6 +83,7 @@ def mk_web_dir(f_mk_prompt):
 # choose from the templates available
 # and cp into the directory
 def select_template(f_mk_prompt):
+    looping = True
     temp_options = """
         Template options:
         no template    displays default apache page
@@ -90,37 +92,42 @@ def select_template(f_mk_prompt):
         portfolio      displays a basic portfolio-style page    
     """
     print(temp_options)
-    temp_prompt = input("Pick which style to use:  ")
-    
-    # if no template, insert most basic index.html file 
-    # for basic access
-    match temp_prompt.lower():
-        case 'no template':
-            # do nothing
-            print("No template selected. Continuing...")
-        case 'business':
-            print("Selecting business template...")
-            # cp to home dir first
-            subprocess.run(["cp", "-R", "templates/business", f"{HOME}/{f_mk_prompt}/business"])
-            # then cp to doc root
-            subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/business", f"{ROOT}/{f_mk_prompt}/business"])
-            print("Business template successfully added.")
-        case 'blog':
-            print("Selecting blog template...")
-            # cp to home dir first
-            subprocess.run(["cp", "-R", "templates/blog", f"{HOME}/{f_mk_prompt}/blog"])
-            # then cp to doc root
-            subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/blog", f"{ROOT}/{f_mk_prompt}/blog"])
-            print("Blog template successfully added.")
-        case 'portfolio':
-            print("Selecting portfolio template...")
-            # cp to home dir first
-            subprocess.run(["cp", "-R", "templates/portfolio", f"{HOME}/{f_mk_prompt}/portfolio"])
-            # then cp to doc root
-            subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/portfolio", f"{ROOT}/{f_mk_prompt}/portfolio"])
-            print("Portfolio template successfully added.")
-        case _:
-            print("Please type a valid response.")
+
+    while looping:
+        temp_prompt = input("Pick which style to use:  ")
+        # if no template, insert most basic index.html file 
+        # for basic access
+        match temp_prompt.lower():
+            case 'no template':
+                # do nothing
+                print("No template selected. Continuing...")
+                looping = False
+            case 'business':
+                print("Selecting business template...")
+                # cp to home dir first
+                subprocess.run(["cp", "-R", "templates/business", f"{HOME}/{f_mk_prompt}/business"])
+                # then cp to doc root
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/business", f"{ROOT}/{f_mk_prompt}/business"])
+                print("Business template successfully added.")
+                looping = False
+            case 'blog':
+                print("Selecting blog template...")
+                # cp to home dir first
+                subprocess.run(["cp", "-R", "templates/blog", f"{HOME}/{f_mk_prompt}/blog"])
+                # then cp to doc root
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/blog", f"{ROOT}/{f_mk_prompt}/blog"])
+                print("Blog template successfully added.")
+                looping = False
+            case 'portfolio':
+                print("Selecting portfolio template...")
+                # cp to home dir first
+                subprocess.run(["cp", "-R", "templates/portfolio", f"{HOME}/{f_mk_prompt}/portfolio"])
+                # then cp to doc root
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/portfolio", f"{ROOT}/{f_mk_prompt}/portfolio"])
+                print("Portfolio template successfully added.")
+                looping = False
+            case _:
+                print("Please type a valid response.")
         
 
 # run chown and chmod 
@@ -133,7 +140,18 @@ def set_perms(f_mk_prompt):
     subprocess.run(["sudo", "chmod", "755", f"{ROOT}"])
 
 
+# print final steps for sysadmin to the screen
+# put in a func instead of main for main to remain the orchestrator
+def print_final_steps():
+    print("Apache setup complete.")
+    print("Ensure to add a CNAME record for the website in the DNS zone.")
+    print("Then, reset the DNS service.")
+    print("Done!")
+
+
 def main():
+    looping = True
+
     # begin by running bash script
     print("Running BASH sys checks...")
     subprocess.run(['./apache_install.sh'])
@@ -147,26 +165,28 @@ def main():
     # check what setup is being used
     sec_prompt = input("Is this setup using TLS/SSL? y/N: ")
     
-    if sec_prompt.lower().strip() == 'y':
-        print("Setting up conf file...")
-        update_https_conf(HTTPS, f_mk_prompt, ROOT)
-        # also run tls_ssl.py here as well
-        pass
-    elif sec_prompt.lower().strip() == 'n':
-        print("Setting up conf file...")
-        update_http_conf(HTTP, f_mk_prompt, ROOT)
-    else:
-        print("Please answer y or n to the question.")    
+    while looping:
+        if sec_prompt.lower().strip() == 'y':
+            print("Setting up conf file...")
+            update_https_conf(HTTPS, f_mk_prompt, ROOT)
+            
+            # also run tls_ssl.py here as well
+            mk_crt(f_mk_prompt)
+            mk_bak()
+            looping = False
+        elif sec_prompt.lower().strip() == 'n':
+            print("Setting up conf file...")
+            update_http_conf(HTTP, f_mk_prompt, ROOT)
+            looping = False
+        else:
+            print("Please answer y or n to the question.")    
 
     select_template(f_mk_prompt)
 
     # finally, set perms    
     set_perms(f_mk_prompt)
 
-    print("Apache setup complete.")
-    print("Ensure to add a CNAME record for the website in the DNS zone.")
-    print("Then, reset the DNS service.")
-    print("Done!")
+    print_final_steps()
 
 
 if __name__ == "__main__":
