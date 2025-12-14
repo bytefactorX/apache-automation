@@ -16,8 +16,8 @@ HTTP = 80
 HTTPS = 443
 
 # import other python scripts
-from conf import update_http_conf, update_https_conf
-from tls_ssl import mk_crt, mk_bak
+from conf import update_http_conf, update_https_conf, write_https_protocols
+from tls_ssl import mk_crt, mk_bak, update_ssl_conf
 
 # manual IP address will be required 
 # to ensure best practices are being exercised
@@ -169,10 +169,12 @@ def main():
         if sec_prompt.lower().strip() == 'y':
             print("Setting up conf file...")
             update_https_conf(HTTPS, f_mk_prompt, ROOT)
+            write_https_protocols(f_mk_prompt)            
             
             # also run tls_ssl.py here as well
             mk_crt(f_mk_prompt)
             mk_bak()
+            update_ssl_conf(f_mk_prompt)
             looping = False
         elif sec_prompt.lower().strip() == 'n':
             print("Setting up conf file...")
