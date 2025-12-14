@@ -92,6 +92,7 @@ def select_template(f_mk_prompt):
         blog           displays a basic blog-style page
         portfolio      displays a basic portfolio-style page    
     """
+    print(temp_options)
     temp_prompt = input("Pick which style to use:  ")
     
     # if no template, insert most basic index.html file 
