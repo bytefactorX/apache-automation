@@ -20,7 +20,7 @@ def update_http_conf(HTTP, f_mk_prompt, ROOT):
             file.write(w_http)
         # most likely to occur
         except PermissionError as e:
-            print(f"Error occured: {e}")
+            print(f"Error occurred: {e}")
 
     print("HTTP configuration successful.")
 
@@ -38,9 +38,9 @@ def update_https_conf(HTTPS, f_mk_prompt, ROOT):
     # write to file
     with open(f"{CONF}/{f_mk_prompt}.conf", "w") as file:
         try:
-            file.write(w_http)
+            file.write(w_https)
         # most likely to occur
         except PermissionError as e:
-            print(f"Error occured: {e}")
+            print(f"Error occurred: {e}")
 
     print("HTTPS configuration successful.")
