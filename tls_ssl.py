@@ -4,6 +4,7 @@ import subprocess
 
 # define constants
 SSLCONF = "/etc/httpd/conf.d/ssl.conf"
+HTTPSCONF = "/etc/httpd/conf.d"
 KEY_LOC = "/etc/pki/tls/private"
 CRT_LOC = "/etc/pki/tls/certs"
 
@@ -28,8 +29,13 @@ def mk_bak():
         print(f"Error occurred: {e}")
 
 
-# try to do all major writes here if possible
-def update_ssl_conf():
-    pass
-    
+# add the include for .conf file
+def update_ssl_conf(f_mk_prompt):
+    with open(SSLCONF, "r") as file:
+        data = file.readlines()
 
+    data.append(f"\nInclude {HTTPSCONF}/{f_mk_prompt}.conf\n")
+
+    with open(SSLCONF, "w") as file:
+        file.writelines(data)
+    
