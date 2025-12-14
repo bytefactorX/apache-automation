@@ -4,11 +4,18 @@ import subprocess
 
 # define constants
 SSLCONF = "/etc/httpd/conf.d/ssl.conf"
-
+KEY_LOC = "/etc/pki/tls/private"
+CRT_LOC = "/etc/pki/tls/certs"
 
 # run the openssl command to make key and crt
 def mk_crt(f_mk_prompt):
-    pass
+    print("Creating OpenSSL cert/key...")
+    
+    try:
+        subprocess.run(f"sudo openssl req -x509 -nodes -newkey rsa:4096 -keyout {KEY_LOC}/{f_mk_prompt}.key -out {CRT_LOC}/{f_mk_prompt}.crt", shell=True, check=True)
+        print("Key and cert generated successfully.")
+    except subprocess.CompletedProcess as e:
+        print(f"Error occurred: {e}")
 
 
 # make backup of ssl.conf.bak
