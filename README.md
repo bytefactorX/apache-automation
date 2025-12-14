@@ -25,6 +25,6 @@ git clone https://github.com/bytefactorX/apache-automation.git
 
 Once files are downloaded, begin the automation script by running:
 ```
-./main.py
+sudo ./main.py
 ```
 Sudo password will be required, and some system checks will be completed. Make sure to follow the instructions as needed for a successful setup.
