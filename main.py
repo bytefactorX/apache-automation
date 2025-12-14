@@ -141,7 +141,8 @@ def main():
     sec_prompt = input("Is this setup using TLS/SSL? y/N: ")
     
     if sec_prompt.lower().strip() == 'y':
-        # run https func here
+        print("Setting up conf file...")
+        update_https_conf(HTTPS, f_mk_prompt, ROOT)
         # also run tls_ssl.py here as well
         pass
     elif sec_prompt.lower().strip() == 'n':
