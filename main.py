@@ -121,10 +121,17 @@ def select_template(f_mk_prompt):
             print("Portfolio template successfully added.")
         case _:
             print("Please type a valid response.")
-    
+        
+
+# run chown and chmod 
+# added to new func for better refactor
+def set_perms(f_mk_prompt):
+    print("Setting directory permissions...")    
+
     # add proper perms to the doc root 
     subprocess.run(["sudo", "chown", "-R", "apache:apache", f"{ROOT}"])
-    
+    subprocess.run(["sudo", "chmod", "755", f"{ROOT}"])
+
 
 def main():
     # begin by running bash script
@@ -151,12 +158,15 @@ def main():
     else:
         print("Please answer y or n to the question.")    
 
-    # finally, set template
     select_template(f_mk_prompt)
-    
+
+    # finally, set perms    
+    set_perms(f_mk_prompt)
+
     print("Apache setup complete.")
     print("Ensure to add a CNAME record for the website in the DNS zone.")
-    print("Quitting...")
+    print("Then, reset the DNS service.")
+    print("Done!")
 
 
 if __name__ == "__main__":
