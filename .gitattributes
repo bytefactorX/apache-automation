@@ -1,0 +1,2 @@
+# ignore langs of templates dir
+templates/** linguist-vendored
