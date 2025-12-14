@@ -45,8 +45,8 @@ def get_web_dir():
         f_mk_prompt = mk_prompt.replace(" ", "")
 
         # valid characters for a website name
-        valid_chrs = r'[A-Za-z0-9.-]'
-        
+        valid_chrs = r'^[A-Za-z][A-Za-z-]*\.[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)?$'
+
         # all checks necessary to create valid website (avoid any user errors)
         if not re.match(valid_chrs, f_mk_prompt):
             print("Invalid website name. Please try again.")
