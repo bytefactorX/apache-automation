@@ -39,3 +39,18 @@ def update_ssl_conf(f_mk_prompt):
     with open(SSLCONF, "w") as file:
         file.writelines(data)
     
+
+# remove the _default_ vhost to prevent overwriting 
+def rm_default():
+    data = []
+    with open(SSLCONF, "r") as file:
+        lines = file.readlines()
+
+        for line in lines:
+            if "_default_" in line:
+                line = "\n"
+
+    with open(SSLCONF, "w") as file:
+        file.writelines(line)   
+
+    print("TLS/SSL setup complete.")
