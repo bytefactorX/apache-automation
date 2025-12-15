@@ -123,7 +123,7 @@ def select_template(f_mk_prompt):
                         print(f"Error occurred: {e}")
 
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/", f"{ROOT}/{f_mk_prompt}/"])
+                subprocess.run(f"sudo cp -R {HOME}/{f_mk_prompt}/* {ROOT}/{f_mk_prompt}/", shell=True)
                 print("Business template successfully added.")
                 looping = False
 
@@ -142,7 +142,7 @@ def select_template(f_mk_prompt):
                 print("Selecting blog template...")
                 
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}/"])
+                subprocess.run(f"sudo cp -R {HOME}/{f_mk_prompt}/* {ROOT}/{f_mk_prompt}/", shell=True)
 
                 print("Blog template successfully added.")
                 looping = False
@@ -160,7 +160,7 @@ def select_template(f_mk_prompt):
                         print(f"Error occurred: {e}")
 
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/", f"{ROOT}/{f_mk_prompt}/"])
+                subprocess.run(f"sudo cp -R {HOME}/{f_mk_prompt}/* {ROOT}/{f_mk_prompt}/", shell=True)
             
                 print("Portfolio template successfully added.")
                 looping = False
@@ -199,9 +199,7 @@ def main():
     chk_ip_addr()
     f_mk_prompt = get_web_dir()
     mk_web_dir(f_mk_prompt)
-
-    select_template(f_mk_prompt)
-    
+ 
     # run conf scripts
     # check what setup is being used
     sec_prompt = input("Is this setup using TLS/SSL? y/N: ")
