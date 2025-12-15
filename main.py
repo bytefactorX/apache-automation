@@ -7,6 +7,7 @@
 import subprocess
 import re
 import os
+import shutil
 
 # script constants
 HOME = os.path.expanduser("~")
@@ -108,6 +109,8 @@ def select_template(f_mk_prompt):
                 subprocess.run(["cp", "-R", "templates/business/*", f"{HOME}/{f_mk_prompt}/"])
                 # then cp to doc root
                 subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
+
+                template = "business"
                 print("Business template successfully added.")
                 looping = False
             case 'blog':
@@ -116,6 +119,8 @@ def select_template(f_mk_prompt):
                 subprocess.run(["cp", "-R", "templates/blog/*", f"{HOME}/{f_mk_prompt}/"])
                 # then cp to doc root
                 subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
+
+                template "blog"
                 print("Blog template successfully added.")
                 looping = False
             case 'portfolio':
@@ -124,11 +129,15 @@ def select_template(f_mk_prompt):
                 subprocess.run(["cp", "-R", "templates/portfolio/*", f"{HOME}/{f_mk_prompt}/"])
                 # then cp to doc root
                 subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
+            
+                template = "portfolio"
                 print("Portfolio template successfully added.")
                 looping = False
             case _:
                 print("Please type a valid response.")
-        
+       
+    return template
+ 
 
 # run chown and chmod 
 # added to new func for better refactor
@@ -161,6 +170,8 @@ def main():
     f_mk_prompt = get_web_dir()
     mk_web_dir(f_mk_prompt)
 
+    temmplate = select_template(f_mk_prompt)
+    
     # run conf scripts
     # check what setup is being used
     sec_prompt = input("Is this setup using TLS/SSL? y/N: ")
@@ -168,7 +179,7 @@ def main():
     while looping:
         if sec_prompt.lower().strip() == 'y':
             print("Setting up conf file...")
-            update_https_conf(HTTPS, f_mk_prompt, ROOT)
+            update_https_conf(HTTPS, f_mk_prompt, ROOT, template)
             write_https_protocols(f_mk_prompt)            
             
             # also run tls_ssl.py here as well
@@ -179,12 +190,10 @@ def main():
             looping = False
         elif sec_prompt.lower().strip() == 'n':
             print("Setting up conf file...")
-            update_http_conf(HTTP, f_mk_prompt, ROOT)
+            update_http_conf(HTTP, f_mk_prompt, ROOT, template)
             looping = False
         else:
             print("Please answer y or n to the question.")    
-
-    select_template(f_mk_prompt)
 
     # finally, set perms    
     set_perms(f_mk_prompt)
