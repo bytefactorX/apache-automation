@@ -108,12 +108,17 @@ def select_template(f_mk_prompt):
             case 'business':
                 print("Selecting business template...")
                 business_src = "templates/business"
-                # allow cp /* 
-                business_files = glob.glob(os.path.join(business_src, "*"))
 
-                for file in business_files:
+                # get the dirs from the template dir
+                for dirs in os.listdir(business_src):
+                    dirs_src = os.path.join(business_src, dirs)
+                    dirs_dst = os.path.join(f"{HOME}/{f_mk_prompt}", dirs)
+
                     try:
-                        shutil.copy2(file, f"{HOME}/{f_mk_prompt}")
+                        if os.path.isfile(dirs_src):
+                            shutil.copy2(dirs_src, dirs_dst)
+                        else:
+                            shutil.copytree(disr_src, dirs_dst)
                     except Exception as e:
                         print(f"Error occurred: {e}")
 
