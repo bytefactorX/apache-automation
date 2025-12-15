@@ -61,6 +61,7 @@ def write_https_protocols(f_mk_prompt):
     TLS/SSL Options:
     TLSv1.2, TLSv1.3, or both
     """
+    print(tls_ssl_options)
     
     with open(f"{CONF}/{f_mk_prompt}.conf", "r") as file:
         data = file.readlines()
@@ -72,18 +73,20 @@ def write_https_protocols(f_mk_prompt):
         # case statement to append to conf file
         match tls_ssl_prompt.lower().strip():
             case "tlsv1.2" | "tls 1.2" | "tls1.2":
-                data[8] = "SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.3\n"
+                data[8] = "  SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.3\n"
                 looping = False
             case "tlsv1.3" | "tls 1.3" | "tls1.3":
-                data[8] = "SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.2\n"
+                data[8] = "  SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.2\n"
                 looping = False
             case "both" | "tlsv1.2, tlsv1.3" | "tls1.2, tls1.3":
                 # by default allows TLSv1.2 and TLSv1.3
-                data[8] = "SSLProtocol all\n"
+                data[8] = "  SSLProtocol all\n"
                 looping = False
             case _:
                 print("Please type a valid TLS version.")
 
     # write the line to file
     with open(f"{CONF}/{f_mk_prompt}.conf", "w") as file:
-        file.writelines(data)        
+        file.writelines(data)
+
+    print("SSL protocols successfully configured.")        
