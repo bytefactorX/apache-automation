@@ -17,7 +17,7 @@ HTTPS = 443
 
 # import other python scripts
 from conf import update_http_conf, update_https_conf, write_https_protocols
-from tls_ssl import mk_crt, mk_bak, update_ssl_conf
+from tls_ssl import mk_crt, mk_bak, update_ssl_conf, rm_default
 
 # manual IP address will be required 
 # to ensure best practices are being exercised
@@ -105,25 +105,25 @@ def select_template(f_mk_prompt):
             case 'business':
                 print("Selecting business template...")
                 # cp to home dir first
-                subprocess.run(["cp", "-R", "templates/business", f"{HOME}/{f_mk_prompt}/business"])
+                subprocess.run(["cp", "-R", "templates/business/*", f"{HOME}/{f_mk_prompt}/"])
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/business", f"{ROOT}/{f_mk_prompt}/business"])
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
                 print("Business template successfully added.")
                 looping = False
             case 'blog':
                 print("Selecting blog template...")
                 # cp to home dir first
-                subprocess.run(["cp", "-R", "templates/blog", f"{HOME}/{f_mk_prompt}/blog"])
+                subprocess.run(["cp", "-R", "templates/blog/*", f"{HOME}/{f_mk_prompt}/"])
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/blog", f"{ROOT}/{f_mk_prompt}/blog"])
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
                 print("Blog template successfully added.")
                 looping = False
             case 'portfolio':
                 print("Selecting portfolio template...")
                 # cp to home dir first
-                subprocess.run(["cp", "-R", "templates/portfolio", f"{HOME}/{f_mk_prompt}/portfolio"])
+                subprocess.run(["cp", "-R", "templates/portfolio/*", f"{HOME}/{f_mk_prompt}/"])
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/portfolio", f"{ROOT}/{f_mk_prompt}/portfolio"])
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
                 print("Portfolio template successfully added.")
                 looping = False
             case _:
@@ -175,6 +175,7 @@ def main():
             mk_crt(f_mk_prompt)
             mk_bak()
             update_ssl_conf(f_mk_prompt)
+            rm_default
             looping = False
         elif sec_prompt.lower().strip() == 'n':
             print("Setting up conf file...")
