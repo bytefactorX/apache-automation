@@ -118,12 +118,12 @@ def select_template(f_mk_prompt):
                         if os.path.isfile(dirs_src):
                             shutil.copy2(dirs_src, dirs_dst)
                         else:
-                            shutil.copytree(disr_src, dirs_dst)
+                            shutil.copytree(dirs_src, dirs_dst)
                     except Exception as e:
                         print(f"Error occurred: {e}")
 
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}"])
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/", f"{ROOT}/{f_mk_prompt}/"])
                 print("Business template successfully added.")
                 looping = False
 
