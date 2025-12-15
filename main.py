@@ -8,6 +8,7 @@ import subprocess
 import re
 import os
 import shutil
+import glob
 
 # script constants
 HOME = os.path.expanduser("~")
@@ -98,45 +99,69 @@ def select_template(f_mk_prompt):
         temp_prompt = input("Pick which style to use:  ")
         # if no template, insert most basic index.html file 
         # for basic access
-        match temp_prompt.lower():
+        match temp_prompt.lower().strip():
             case 'no template':
                 # do nothing
                 print("No template selected. Continuing...")
                 looping = False
+
             case 'business':
                 print("Selecting business template...")
-                # cp to home dir first
-                subprocess.run(["cp", "-R", "templates/business/*", f"{HOME}/{f_mk_prompt}/"])
-                # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
+                business_src = "templates/business"
+                # allow cp /* 
+                business_files = glob.glob(os.path.join(business_src, "*"))
 
-                template = "business"
+                for file in business_files:
+                    try:
+                        shutil.copy2(file, f"{HOME}/{f_mk_prompt}")
+                    except Exception as e:
+                        print(f"Error occurred: {e}")
+
+                # then cp to doc root
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}"])
                 print("Business template successfully added.")
                 looping = False
+
             case 'blog':
                 print("Selecting blog template...")
-                # cp to home dir first
-                subprocess.run(["cp", "-R", "templates/blog/*", f"{HOME}/{f_mk_prompt}/"])
-                # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
+                blog_src = "templates/blog"
+                # allow cp /* 
+                blog_files = glob.glob(os.path.join(blog_src, "*"))
 
-                template "blog"
+                for file in blog_files:
+                    try:
+                        shutil.copy2(file, f"{HOME}/{f_mk_prompt}")
+                    except Exception as e:
+                        print(f"Error occurred: {e}")
+
+                print("Selecting blog template...")
+                
+                # then cp to doc root
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}", f"{ROOT}/{f_mk_prompt}/"])
+
                 print("Blog template successfully added.")
                 looping = False
+
             case 'portfolio':
                 print("Selecting portfolio template...")
-                # cp to home dir first
-                subprocess.run(["cp", "-R", "templates/portfolio/*", f"{HOME}/{f_mk_prompt}/"])
+                portfolio_src = "templates/portfolio"
+                # allow cp /* 
+                portfolio_files = glob.glob(os.path.join(portfolio_src, "*"))
+
+                for file in portfolio_files:
+                    try:
+                        shutil.copy2(file, f"{HOME}/{f_mk_prompt}")
+                    except Exception as e:
+                        print(f"Error occurred: {e}")
+
                 # then cp to doc root
-                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/*", f"{ROOT}/{f_mk_prompt}/"])
+                subprocess.run(["sudo", "cp", "-R", f"{HOME}/{f_mk_prompt}/", f"{ROOT}/{f_mk_prompt}/"])
             
-                template = "portfolio"
                 print("Portfolio template successfully added.")
                 looping = False
+
             case _:
                 print("Please type a valid response.")
-       
-    return template
  
 
 # run chown and chmod 
@@ -170,7 +195,7 @@ def main():
     f_mk_prompt = get_web_dir()
     mk_web_dir(f_mk_prompt)
 
-    temmplate = select_template(f_mk_prompt)
+    select_template(f_mk_prompt)
     
     # run conf scripts
     # check what setup is being used
@@ -179,7 +204,7 @@ def main():
     while looping:
         if sec_prompt.lower().strip() == 'y':
             print("Setting up conf file...")
-            update_https_conf(HTTPS, f_mk_prompt, ROOT, template)
+            update_https_conf(HTTPS, f_mk_prompt, ROOT)
             write_https_protocols(f_mk_prompt)            
             
             # also run tls_ssl.py here as well
@@ -190,10 +215,12 @@ def main():
             looping = False
         elif sec_prompt.lower().strip() == 'n':
             print("Setting up conf file...")
-            update_http_conf(HTTP, f_mk_prompt, ROOT, template)
+            update_http_conf(HTTP, f_mk_prompt, ROOT)
             looping = False
         else:
             print("Please answer y or n to the question.")    
+    
+    select_template(f_mk_prompt)
 
     # finally, set perms    
     set_perms(f_mk_prompt)

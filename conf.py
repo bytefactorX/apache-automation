@@ -7,7 +7,7 @@ CRT_LOC = "/etc/pki/tls/certs"
 KEY_LOC = "/etc/pki/tls/private"
 
 # TODO: remove whitespaces and replace with tabs
-def update_http_conf(HTTP, f_mk_prompt, ROOT, template):
+def update_http_conf(HTTP, f_mk_prompt, ROOT):
     w_http = f""" 
     <VirtualHost *:{HTTP}>
       ServerName    {f_mk_prompt}
@@ -28,7 +28,7 @@ def update_http_conf(HTTP, f_mk_prompt, ROOT, template):
 
 
 # do the same but for https
-def update_https_conf(HTTPS, f_mk_prompt, ROOT, template):
+def update_https_conf(HTTPS, f_mk_prompt, ROOT):
     w_https = f"""
     <VirtualHost *:{HTTPS}>
       ServerName    {f_mk_prompt}
