@@ -32,7 +32,7 @@ def chk_ip_addr():
     nmcli = subprocess.Popen(('nmcli', 'con', 'show', INTERFACE), stdout=subprocess.PIPE, text=True)
     ip_method = subprocess.check_output(('grep', 'ipv4.method'), stdin=nmcli.stdout, text=True)
 
-    if "auto" in ip_method.stdout:
+    if "auto" in ip_method:
         print("Please change IPv4 method to manual before proceeding.")
         # simple check to ensure user switches to manual IP
         # if they do not, code will still run, as this is just a warning
