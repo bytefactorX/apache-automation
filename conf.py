@@ -5,6 +5,7 @@ CONF = "/etc/httpd/conf.d"
 LOG = "/var/log/httpd"
 CRT_LOC = "/etc/pki/tls/certs"
 KEY_LOC = "/etc/pki/tls/private"
+DOC_ROOT_LN = 8
 
 # TODO: remove whitespaces and replace with tabs
 def update_http_conf(HTTP, f_mk_prompt, ROOT):
@@ -73,15 +74,18 @@ def write_https_protocols(f_mk_prompt):
         # case statement to append to conf file
         match tls_ssl_prompt.lower().strip():
             case "tlsv1.2" | "tls 1.2" | "tls1.2":
-                data[8] = "  SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.3\n"
+                data[DOC_ROOT_LN] = "\t  SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.3\n"
                 looping = False
+
             case "tlsv1.3" | "tls 1.3" | "tls1.3":
-                data[8] = "  SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.2\n"
+                data[DOC_ROOT_LN] = "\t  SSLProtocol -SSLv2 -SSLv3 -TLSv1 -TLSv1.1 -TLSv1.2\n"
                 looping = False
+
             case "both" | "tlsv1.2, tlsv1.3" | "tls1.2, tls1.3":
                 # by default allows TLSv1.2 and TLSv1.3
-                data[8] = "  SSLProtocol all\n"
+                data[DOC_ROOT_LN] = "\t  SSLProtocol all\n"
                 looping = False
+
             case _:
                 print("Please type a valid TLS version.")
 
