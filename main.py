@@ -26,7 +26,11 @@ from tls_ssl import mk_crt, mk_bak, update_ssl_conf, rm_default
 def chk_ip_addr():
     print("Checking default interface for IPv4 method...")
     # capture output to use after process completed
-    ip_method = subprocess.run(f"nmcli con show {INTERFACE} | grep ipv4.method", capture_output=True, text=True, shell=True)
+    # ip_method = subprocess.run(f"nmcli con show {INTERFACE} | grep ipv4.method", capture_output=True, text=True, shell=True)
+
+    # updated command
+    nmcli = subprocess.Popen(('nmcli', 'con', 'show', INTERFACE), stdout=subprocess.PIPE, text=True)
+    ip_method = subprocess.check_output(('grep', 'ipv4.method'), stdin=nmcli.stdout, text=True)
 
     if "auto" in ip_method.stdout:
         print("Please change IPv4 method to manual before proceeding.")
@@ -73,7 +77,7 @@ def mk_web_dir(f_mk_prompt):
         get_web_dir()
     else:
         print("Creating directory in home...")
-        subprocess.run(f"mkdir {HOME}/{f_mk_prompt}", shell=True)
+        subprocess.run(["mkdir", f"{HOME}/{f_mk_prompt}"])
 
     try:
         print("Sending directory to document root...")
@@ -182,6 +186,8 @@ def set_perms(f_mk_prompt):
 # print final steps for sysadmin to the screen
 # put in a func instead of main for main to remain the orchestrator
 def print_final_steps():
+    # final httpd restart to save changes
+    subprocess.run(["sudo", "systemctl", "restart", "httpd.service"])
     print("Apache setup complete.")
     print("Ensure to add a CNAME record for the website in the DNS zone.")
     print("Then, reset the DNS service.")
@@ -216,10 +222,12 @@ def main():
             update_ssl_conf(f_mk_prompt)
             rm_default
             looping = False
+
         elif sec_prompt.lower().strip() == 'n':
             print("Setting up conf file...")
             update_http_conf(HTTP, f_mk_prompt, ROOT)
             looping = False
+
         else:
             print("Please answer y or n to the question.")    
     
